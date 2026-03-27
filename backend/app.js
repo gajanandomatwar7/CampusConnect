@@ -7,6 +7,8 @@ app.use(express.urlencoded({ extended: true }));
 const dotenv=require('dotenv');
 dotenv.config();
 
+const connectToDb=require('./config/mongodb.config');
+connectToDb();
 
 const apiRoutes=require('./routes/api.routes');
 app.use('/api',apiRoutes);
