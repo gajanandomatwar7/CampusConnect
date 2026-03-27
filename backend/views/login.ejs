@@ -1,2 +1,2 @@
-serving a same login page for both teacher and students, now its a bit tricky for login of teacher and student due to different db selection 
-no worries just need to configure two different post parameters in the api routes for student and teacher, which will adjust themselves seperately 
+a single login page for both teachers and student,at post route in api.routes.js get the role from "req.query.role"and depending on the role check in teachermodel or studentmodel
+home.ejs is made to pass the role in the url, 
