@@ -16,6 +16,10 @@ const StudentSchema= new mongoose.Schema({
         type: String,
         required: true,
     },
+    userName:{
+        type: String,
+        required: true,
+    },
     PRN:{
         type: Number,
         required: true,
@@ -27,15 +31,20 @@ const StudentSchema= new mongoose.Schema({
     },
     dept:{
         type:String,
+        enum:['IT'],
         required: true,
     },
-    semster:{
+    semester:{
         type: Number,
         required:true,
         validate:function(n){
-            return Number.isInteger(n) && n>=8 && n<=3;
+            return Number.isInteger(n) && n>=3 && n<=8;
         },
         message: props=>`${props.value} is not a valid Semester!`
+    },
+    password:{
+        type:String,
+        required: true,
     }
 })
 
