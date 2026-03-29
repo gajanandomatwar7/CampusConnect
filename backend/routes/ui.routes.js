@@ -1,51 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campus Connect</title>
+const express=require('express');
+const uiRoutes=express.Router();
 
-    <link rel="stylesheet" href="/CSS/home.css" />
-  </head>
+uiRoutes.get('/',(req,res)=>{
+    res.render('home');
+})
 
-  <body>
-    <div class="container">
-      <!-- HERO -->
-      <div class="hero">
-        <h1>Campus Connect</h1>
-        <p class="tagline">
-          Smarter campus coordination with real-time faculty access, scheduling,
-          and communication.
-        </p>
-
-        <div class="features">
-          <span>📍 Find Faculty</span>
-          <span>🕒 Check Availability</span>
-          <span>🏫 Free Classrooms</span>
-          <span>💬 Secure Chat</span>
-        </div>
-      </div>
-
-      <!-- LOGIN -->
-      <div class="login-section">
-        <h2>Select Your Role</h2>
-
-        <div class="card-wrapper">
-          <div class="card" onclick="login('faculty')">
-            <h3>Teacher</h3>
-            <p>Manage availability and student interactions</p>
-            <button class="btn">Continue</button>
-          </div>
-
-          <div class="card" onclick="login('student')">
-            <h3>Student</h3>
-            <p>Access faculty info and academic resources</p>
-            <button class="btn">Continue</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="/JS/home.js"></script>
-  </body>
-</html>
+module.exports=uiRoutes;

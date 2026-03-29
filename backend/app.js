@@ -7,16 +7,16 @@ app.use(express.urlencoded({ extended: true }));
 const dotenv=require('dotenv');
 dotenv.config();
 
-const connectToDb=require('./config/mongodb.config');
-connectToDb();
+// const connectToDb=require('./config/mongodb.config');
+// connectToDb();
 
 const {connectDb}=require('./config/mysqldb.config');
 connectDb();
 
 //creating tables only once when new table is created or schema is changed
-// require('./models/teacher.table');
-// const create=require('./config/create.table');
-// create();
+require('./models/teacher.table');
+const create=require('./config/create.table');
+create();
 
 const apiRoutes=require('./routes/api.routes');
 app.use('/api',apiRoutes);
