@@ -18,6 +18,7 @@ connectDb();
 
 //creating tables only once when new table is created or schema is changed
 require('./models/teacher.table');
+require('./models/tt.table');
 const create=require('./config/create.table');
 create();
 
