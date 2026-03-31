@@ -123,5 +123,10 @@ apiRoutes.post('/facultyRegister', async (req, res) => {
     } catch (error) {
         console.log(error);
     }
+});
+
+apiRoutes.post('/addTTentry',(req,res)=>{
+    //adding tt entry
+    //should we keep this as feature for admin side or what 
 })
 module.exports = apiRoutes;

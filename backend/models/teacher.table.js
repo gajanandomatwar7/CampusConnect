@@ -29,4 +29,11 @@ const Teacher = sequelize.define('Teacher', {
 
 });
 
+Teacher.associate = (models) => {
+    Teacher.hasMany(models.Timetable, {
+        foreignKey: "teacherId",
+        as: "schedule"
+    });
+};
+
 module.exports = Teacher;
