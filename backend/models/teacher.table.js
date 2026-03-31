@@ -4,7 +4,8 @@ const { sequelize } = require('../config/mysqldb.config');
 const Teacher = sequelize.define('Teacher', {
   userName:{
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    unique:true
   },
   firstName:{
     type: DataTypes.STRING,
@@ -18,6 +19,10 @@ const Teacher = sequelize.define('Teacher', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  password:{
+    type:DataTypes.STRING,
+    allowNull:false,
+  }
   // subjects:{
   //   type: DataTypes.ARRAY
   // },

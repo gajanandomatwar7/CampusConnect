@@ -5,10 +5,14 @@ Use ui.routes.js for routes related to navigation
 Anuj
 1. Add the url for mongodb cluster in .env file 
 2. will be implementing teachers data with monogdb so create a similar kind of schema for teacher as well similar to that of students 
+3. Desgin dashboard for both teacher and student
 
 Pratiksha 
 1. Take a look at how we will be fetching timetables and images particularly from sql, 
+2. Desgin dashboard for both teacher and student
 
 Gajanan
 1. Make the structure for implementation 
+2. Desgin dashboard for both teacher and student
+
 

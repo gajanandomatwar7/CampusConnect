@@ -23,7 +23,7 @@ uiRoutes.get('/facultyRegister',(req,res)=>{
     res.render('facultyRegister');
 });
 
-uiRoutes.get('/facultyDashboard',(req,res)=>{
+uiRoutes.get('/facultyDashboard',authMiddlware,(req,res)=>{
     res.render('facultyDashboard');
 })
 

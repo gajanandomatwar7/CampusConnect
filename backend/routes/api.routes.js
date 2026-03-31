@@ -2,8 +2,8 @@ const express = require('express');
 const apiRoutes = express.Router();
 const Student = require('../models/student.db');
 const bcrypt = require('bcrypt');
-const jwt=require('jsonwebtoken');
-const Teacher=require('../models/teacher.table');
+const jwt = require('jsonwebtoken');
+const Teacher = require('../models/teacher.table');
 
 
 apiRoutes.post('/login', async (req, res) => {
@@ -27,7 +27,7 @@ apiRoutes.post('/login', async (req, res) => {
 
             res.cookie("token", token, {
                 httpOnly: true,
-                secure: false, 
+                secure: false,
                 sameSite: "strict",
             });
             res.redirect("../studentDashboard");
@@ -36,9 +36,31 @@ apiRoutes.post('/login', async (req, res) => {
             console.log(error);
 
         }
-    }else{
+    } else {
         try {
-            
+            const user = await Teacher.findOne({ where: { userName } });
+            if (!user) {
+                return res.status(400).send("invalid credentials");
+            }
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).send("invalid");
+
+            }
+            const token = jwt.sign(
+                { _id: user.id, userName: user.userName },
+                process.env.JWT_SECRET,
+                { expiresIn: "1d" }
+            );
+
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: false, // true in production
+                sameSite: "strict",
+            });
+
+            res.redirect('../facultyDashboard');
+
         } catch (error) {
             console.log(error);
         }
@@ -77,24 +99,25 @@ apiRoutes.post('/studentRegister', async (req, res) => {
     }
 });
 
-apiRoutes.post('/facultyRegister',async (req,res)=>{
+apiRoutes.post('/facultyRegister', async (req, res) => {
     try {
-        const { userName, firstName, lastName, designation } = req.body;
+        const { userName, firstName, lastName, designation, password } = req.body;
 
-        if (!userName || !firstName || !lastName || !designation) {
+        if (!userName || !firstName || !lastName || !designation || !password) {
             return res.status(400).send("error while registring ");
         }
-
+        const encPassword = await bcrypt.hash(password, 10);
         const teacher = await Teacher.create({
             userName,
             firstName,
             lastName,
-            designation
+            designation,
+            password: encPassword
         });
 
-        // console.log("teahcer created",teacher);
-        
-        const role="teacher"
+        // console.log("teahcer created", teacher);
+
+        const role = "teacher"
         res.redirect(`/login?role=${role}`);
 
     } catch (error) {

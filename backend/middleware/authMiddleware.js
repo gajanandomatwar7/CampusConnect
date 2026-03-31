@@ -1,7 +1,7 @@
 //authentication middleware so that the logged in users can only navigate between the pages
 const jwt = require("jsonwebtoken");
 const studentModel = require("../models/student.db");
-// const teacherModel = require("../models/teacher.db");
+const Teacher = require("../models/teacher.table");
 
 const authMiddlware = async (req, res, next) => {
     const token = req.cookies.token;
@@ -18,15 +18,15 @@ const authMiddlware = async (req, res, next) => {
             verified = true;
             req.user = student;
         } else {
-            // const teacher = await teacherModel.findOne({
-            //     userName: decoded.userName,
-            // });
-            // req.user = teacher;
-            // verified = true;
+            const teacher = await Teacher.findOne({where:{userName}});
+            req.user = teacher;
+            verified = true;
         }
 
         if (verified) {
             next();
+        }else{
+            return res.send("log ing required");
         }
     } catch (err) {
         console.log(err);
