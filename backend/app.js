@@ -7,8 +7,11 @@ app.use(express.urlencoded({ extended: true }));
 const dotenv=require('dotenv');
 dotenv.config();
 
-// const connectToDb=require('./config/mongodb.config');
-// connectToDb();
+const cookieParser=require('cookie-parser');
+app.use(cookieParser());
+
+const connectToDb=require('./config/mongodb.config');
+connectToDb();
 
 const {connectDb}=require('./config/mysqldb.config');
 connectDb();

@@ -1,22 +1,49 @@
-const express=require('express');
-const apiRoutes=express.Router();
-const Student=require('../models/student.db');
-const bcrypt=require('bcrypt')
+const express = require('express');
+const apiRoutes = express.Router();
+const Student = require('../models/student.db');
+const bcrypt = require('bcrypt');
+const jwt=require('jsonwebtoken');
 
-apiRoutes.post('/studentLogin',(req,res)=>{
-    
-    res.redirect('studentDashboard');
-});
-apiRoutes.post('/facultyLogin',(req,res)=>{
-    
-    res.redirect('facultyDashboard');
+apiRoutes.post('/login', async (req, res) => {
+    const role = req.query.role;
+    const { userName, password } = req.body;
+    if (role == "student") {
+        try {
+            const user = await Student.findOne({ userName });
+            if (!user) {
+                return res.status(404).send("Invalid ");
+            }
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(404).send("Invalid Credentials");
+            }
+            const token = jwt.sign(
+                { _id: user._id, userName: user.userName },
+                process.env.JWT_SECRET,
+                { expiresIn: "1d" }
+            );
+
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: false, 
+                sameSite: "strict",
+            });
+            res.redirect("../studentDashboard");
+
+        } catch (error) {
+            console.log(error);
+
+        }
+    }else{
+        
+    }
 })
 
-apiRoutes.post('/studentRegister',async (req,res)=>{
+apiRoutes.post('/studentRegister', async (req, res) => {
     try {
         const { firstName, lastName, userName, PRN, dept, semester, password } = req.body;
 
-        const encPassword=await bcrypt.hash(password,10)
+        const encPassword = await bcrypt.hash(password, 10)
         // Create new student
         const newStudent = new Student({
             firstName,
@@ -25,7 +52,7 @@ apiRoutes.post('/studentRegister',async (req,res)=>{
             PRN,
             dept,
             semester,
-            password:encPassword
+            password: encPassword
         });
 
         await newStudent.save();
@@ -43,4 +70,12 @@ apiRoutes.post('/studentRegister',async (req,res)=>{
         res.send("Error registering student ❌");
     }
 });
-module.exports=apiRoutes;
+
+apiRoutes.post('/facultyRegister',(req,res)=>{
+    try {
+        
+    } catch (error) {
+        console.log(error);
+    }
+})
+module.exports = apiRoutes;

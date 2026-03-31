@@ -1,5 +1,6 @@
 const express=require('express');
 const uiRoutes=express.Router();
+const authMiddlware=require('../middleware/authMiddleware');
 
 uiRoutes.get('/',(req,res)=>{
     res.render('home');
@@ -8,10 +9,18 @@ uiRoutes.get('/',(req,res)=>{
 uiRoutes.get('/login',(req,res)=>{
     const role=req.query.role;
     res.render('login',{role})
-})
+});
 
 uiRoutes.get('/studentRegister',(req,res)=>{
     res.render('studentRegister')
-})
+});
+
+uiRoutes.get('/studentDashboard',authMiddlware,(req,res)=>{
+    res.render('studentDashboard');
+});
+
+uiRoutes.get('/facultyRegister',(req,res)=>{
+    res.render('facultyRegiser');
+});
 
 module.exports=uiRoutes;
