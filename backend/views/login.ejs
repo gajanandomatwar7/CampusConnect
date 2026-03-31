@@ -64,11 +64,11 @@ home.ejs is made to pass the role in the url,  -->
 <body>
 
 <div class="container">
-    <h2><%= role === 'faculty' ? 'Faculty Login' : 'Student Login' %></h2>
+    <h2><%= role === 'teacher' ? 'Faculty Login' : 'Student Login' %></h2>
 
     <form action="/api/login?role=<%= role %>" method="POST">
         
-        <% if(role === 'faculty'){ %>
+        <% if(role === 'teacher'){ %>
             <input type="text" name="userName" placeholder="Username" required>
         <% } else { %>
             <input type="text" name="userName" placeholder="Username" required>

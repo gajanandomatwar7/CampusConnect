@@ -20,7 +20,11 @@ uiRoutes.get('/studentDashboard',authMiddlware,(req,res)=>{
 });
 
 uiRoutes.get('/facultyRegister',(req,res)=>{
-    res.render('facultyRegiser');
+    res.render('facultyRegister');
 });
+
+uiRoutes.get('/facultyDashboard',(req,res)=>{
+    res.render('facultyDashboard');
+})
 
 module.exports=uiRoutes;

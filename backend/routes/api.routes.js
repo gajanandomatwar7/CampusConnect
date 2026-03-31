@@ -3,6 +3,8 @@ const apiRoutes = express.Router();
 const Student = require('../models/student.db');
 const bcrypt = require('bcrypt');
 const jwt=require('jsonwebtoken');
+const Teacher=require('../models/teacher.table');
+
 
 apiRoutes.post('/login', async (req, res) => {
     const role = req.query.role;
@@ -35,7 +37,11 @@ apiRoutes.post('/login', async (req, res) => {
 
         }
     }else{
-        
+        try {
+            
+        } catch (error) {
+            console.log(error);
+        }
     }
 })
 
@@ -43,8 +49,8 @@ apiRoutes.post('/studentRegister', async (req, res) => {
     try {
         const { firstName, lastName, userName, PRN, dept, semester, password } = req.body;
 
-        const encPassword = await bcrypt.hash(password, 10)
-        // Create new student
+        const encPassword = await bcrypt.hash(password, 10);
+
         const newStudent = new Student({
             firstName,
             lastName,
@@ -71,9 +77,26 @@ apiRoutes.post('/studentRegister', async (req, res) => {
     }
 });
 
-apiRoutes.post('/facultyRegister',(req,res)=>{
+apiRoutes.post('/facultyRegister',async (req,res)=>{
     try {
+        const { userName, firstName, lastName, designation } = req.body;
+
+        if (!userName || !firstName || !lastName || !designation) {
+            return res.status(400).send("error while registring ");
+        }
+
+        const teacher = await Teacher.create({
+            userName,
+            firstName,
+            lastName,
+            designation
+        });
+
+        // console.log("teahcer created",teacher);
         
+        const role="teacher"
+        res.redirect(`/login?role=${role}`);
+
     } catch (error) {
         console.log(error);
     }
