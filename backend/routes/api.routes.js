@@ -4,7 +4,11 @@ const Student = require('../models/student.db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Teacher = require('../models/teacher.table');
-
+const authMiddlware = require('../middleware/authMiddleware');
+const Status = require('../models/status.table');
+const checkValidity = require('../models/slots');
+const TimeTable = require('../models/tt.table');
+const { Op } = require('sequelize');
 
 apiRoutes.post('/login', async (req, res) => {
     const role = req.query.role;
@@ -125,8 +129,140 @@ apiRoutes.post('/facultyRegister', async (req, res) => {
     }
 });
 
-apiRoutes.post('/addTTentry',(req,res)=>{
+apiRoutes.post('/updateStatus', authMiddlware, async (req, res) => {
+    const { status } = req.body;
+    if (!status) {
+        return res.status(400).send('can not change the status');
+    }
+
+    const update = await Status.create({
+        teacherId: teacherId,
+        updatedStatus: status
+    });
+
+    res.render('facultyDashboard');
+});
+
+// apiRoutes.get('/faculty/:id/status', async (req, res) => {
+//     const facultyId = req.params.id;
+
+//     try {
+//         const latestStatus = await Status.findOne({
+//             where: { facultyId },
+//             order: [['createdAt', 'DESC']]
+//         });
+//         if (latestStatus) {
+//             const now = new Date();
+//             const curTime = now.toTimeString().slice(0, 5);
+
+//             const createdAt = latestStatus.createdAt;
+//             const updatedTime = createdAt.toTimeString().slice(0, 5);
+
+//             const isValid = checkValidity(curTime, updatedTime);
+
+//             if (!isValid) {
+//                 const today = now.toLocaleDateString('en-US', {
+//                     weekday: 'long'
+//                 });
+//                 const teacher = await TimeTable.findAll({ where: { teacherId: facultyId, day: today } })
+//                 if (!teacher) {
+//                     return res.json({
+//                         status: "Available"
+//                     });
+//                 } else {
+//                     return res.json({
+//                         status: "Busy"
+//                     });
+//                 }
+//             }
+
+//             return res.json({
+//                 status: latestStatus.updatedStatus,
+//             });
+//         } else {
+//             const now = new Date();
+//             const today = now.toLocaleDateString('en-US', {
+//                 weekday: 'long'
+//             });
+//             const teacher = await TimeTable.findAll({ where: { teacherId: facultyId, day: today } })
+//             if (!teacher) {
+//                 return res.json({
+//                     status: "Available"
+//                 });
+//             } else {
+                
+//             }
+//         }
+
+//     } catch (error) {
+//         console.log(error);
+
+//     }
+// });
+
+
+
+apiRoutes.get('/faculty/:id/status', async (req, res) => {
+    const facultyId = req.params.id;
+
+    try {
+        const now = new Date();
+
+        const curTime = now.toTimeString().slice(0, 5);      
+        const curTimeFull = now.toTimeString().slice(0, 8);  
+
+        const today = now.toLocaleDateString('en-US', {
+            weekday: 'long'
+        });
+
+        const latestStatus = await Status.findOne({
+            where: { teacherId: facultyId },
+            order: [['createdAt', 'DESC']]
+        });
+
+        if (latestStatus) {
+            const updatedTime = latestStatus.createdAt
+                .toTimeString()
+                .slice(0, 5);
+
+            const isValid = checkValidity(curTime, updatedTime);
+
+            if (isValid) {
+                return res.json({
+                    source: "manual",
+                    status: latestStatus.updatedStatus
+                });
+            }
+        }
+
+        const currentClass = await TimeTable.findOne({
+            where: {
+                teacherId: facultyId,
+                day: today,
+                startTime: { [Op.lte]: curTimeFull },
+                endTime: { [Op.gt]: curTimeFull }
+            }
+        });
+
+        if (currentClass) {
+            return res.json({
+                status: "Busy",
+            });
+        }
+
+        return res.json({
+            status: "Available"
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Server Error");
+    }
+});
+
+apiRoutes.post('/addTTentry', (req, res) => {
     //adding tt entry
     //should we keep this as feature for admin side or what 
-})
+});
+
 module.exports = apiRoutes;

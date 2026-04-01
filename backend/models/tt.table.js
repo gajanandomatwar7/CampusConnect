@@ -21,7 +21,11 @@ const TimeTable = sequelize.define('TimeTable', {
     },
     teacherId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references:{
+            model:'Teacher',
+            key:'id',
+        }
     }
 
 });
