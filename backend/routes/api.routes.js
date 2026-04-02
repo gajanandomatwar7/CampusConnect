@@ -9,6 +9,7 @@ const Status = require('../models/status.table');
 const checkValidity = require('../models/slots');
 const TimeTable = require('../models/tt.table');
 const { Op } = require('sequelize');
+// const uploadStudentImage = require('../controller/uploadImage');
 
 apiRoutes.post('/login', async (req, res) => {
     const role = req.query.role;
@@ -259,6 +260,9 @@ apiRoutes.get('/faculty/:id/status', async (req, res) => {
         res.status(500).send("Server Error");
     }
 });
+
+// apiRoutes.post('/uploadStdentImage',authMiddlware,upload.single('image'),uploadStudentImage(req,res));
+
 
 apiRoutes.post('/addTTentry', (req, res) => {
     //adding tt entry
