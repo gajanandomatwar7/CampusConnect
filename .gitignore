@@ -5,3 +5,4 @@ practice
 practice/node_modules
 backend/controller
 backend/views/facultyProfile.ejs
+backend/sockets

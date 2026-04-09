@@ -5,10 +5,7 @@ const Status= sequelize.define('Status',{
     teacherId:{
         type:DataTypes.INTEGER,
         allowNull:false,
-        references:{
-            model:'Teacher',
-            key:'id'
-        }
+        
     },
     updatedStatus:{
         type:DataTypes.ENUM('Busy','onLeave','Available'),
@@ -16,11 +13,11 @@ const Status= sequelize.define('Status',{
     },
 });
 
-Status.associate = (models) => {
-    Status.belongsTo(models.Teacher, {
-        foreignKey: "teacherId",
-        as: "teacher"
-    });
-};
+// Status.associate = (models) => {
+//     Status.belongsTo(models.Teacher, {
+//         foreignKey: "teacherId",
+//         as: "teacher"
+//     });
+// };
 
 module.exports=Status;

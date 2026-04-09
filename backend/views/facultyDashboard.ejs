@@ -3,10 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Faculty Dashboard</title>
+<style>
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    background: #fff;
+}
+
+.card:hover {
+    background: #f5f5f5;
+    transform: scale(1.02);
+}
+
+.card h3 {
+    margin: 0;
+}
+
+button {
+    margin-top: 10px;
+}
+</style>
 </head>
 <body>
-    <h1>faculty dashboard </h1>
-    
+    <h1>temporary checking for message receivers</h1>
+
+    <div class="container">
+    <h1>Faculty Dashboard</h1>
+
+    <% if (!students || students.length === 0) { %>
+        <p>No students found</p>
+    <% } else { %>
+
+        <div class="grid">
+            <% students.forEach(student => { %>
+                <div class="card" 
+                     onclick="openChat('<%= student._id %>', 'student')">
+
+                    <h3><%= student.firstName %> <%= student.lastName %></h3>
+
+                    <p><strong>Username:</strong> <%= student.userName %></p>
+
+                    <button>Open Chat</button>
+                </div>
+            <% }) %>
+        </div>
+
+    <% } %>
+</div>
 </body>
+<script>
+function openChat(id, role) {
+    window.location.href = `/chatview/${id}/${role}`;
+}
+</script>
 </html>

@@ -1,0 +1,32 @@
+<div class="navbar">
+    <a href="/dashboard" class="<%= active === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+    <a href="/profile" class="<%= active === 'profile' ? 'active' : '' %>">Profile</a>
+    <a href="/find-teacher" class="<%= active === 'find' ? 'active' : '' %>">Find Teacher</a>
+    <a href="#" class="<%= active === 'dummy' ? 'active' : '' %>">Dummy</a>
+</div>
+
+<style>
+    .navbar {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: #222;
+        padding: 12px;
+    }
+
+    .navbar a {
+        color: #fff;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        transition: 0.3s;
+    }
+
+    .navbar a:hover {
+        background: #444;
+    }
+
+    .active {
+        background: #007bff;
+    }
+</style>

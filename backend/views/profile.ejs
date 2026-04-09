@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+</head>
+<body>
+
+    <h2>Profile Page</h2>
+
+    <% if (role === "teacher") { %>
+        <h3>Teacher Profile</h3>
+        <p>Name: <%= profileUser.firstName %> <%= profileUser.lastName %></p>
+
+        <button onclick="startChat()">Chat</button>
+
+    <% } else { %>
+        <h3>Your Profile</h3>
+        <h1>Teacher details</h1>
+    <% } %>
+
+    <script>
+        const role="<%= role%>";
+        const profileId="<%= profileId%>"
+        function startChat() {
+            window.location.href = `/chatview/${profileId}/${role}`;
+        }
+    </script>
+
+</body>
+</html>

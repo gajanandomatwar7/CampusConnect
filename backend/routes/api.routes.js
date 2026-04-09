@@ -269,4 +269,38 @@ apiRoutes.post('/addTTentry', (req, res) => {
     //should we keep this as feature for admin side or what 
 });
 
+
+//experimenting 
+
+apiRoutes.get('/find-teacher', async (req, res) => {
+    try {
+        const { search } = req.query;
+
+        let whereCondition = {};
+
+        if (search && search.trim() !== "") {
+            whereCondition = {
+                [Op.or]: [
+                    { firstName: { [Op.like]: `%${search}%` } },
+                    { lastName: { [Op.like]: `%${search}%` } }
+                ]
+            };
+        }
+
+        const teachers = await Teacher.findAll({
+            where: whereCondition,
+            attributes: ["username", "firstName", "lastName"]
+        });
+
+        return res.json(teachers);
+
+    } catch (err) {
+        console.error("ERROR IN FIND TEACHER:", err); 
+        return res.status(500).json({
+            error: err.message
+        });
+    }
+});
+
+
 module.exports = apiRoutes;

@@ -15,7 +15,7 @@ const toMinutes = (time) => {
     return h * 60 + m;
 };
 
-//we do no have different value called updatedTime but instead we can directly use the createdAt time from db
+//we do not have different value called updatedTime but instead we can directly use the createdAt time from db
 //curTime from the servers instance
 const checkValidity=(curTime,updatedTime)=>{
     const current = toMinutes(curTime);

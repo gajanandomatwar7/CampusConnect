@@ -22,19 +22,16 @@ const TimeTable = sequelize.define('TimeTable', {
     teacherId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references:{
-            model:'Teacher',
-            key:'id',
-        }
+
     }
 
 });
 
-TimeTable.associate = (models) => {
-    TimeTable.belongsTo(models.Teacher, {
-        foreignKey: "teacherId",
-        as: "teacher"
-    });
-};
+// TimeTable.associate = (models) => {
+//     TimeTable.belongsTo(models.Teacher, {
+//         foreignKey: "teacherId",
+//         as: "teacher"
+//     });
+// };
 
 module.exports = TimeTable;

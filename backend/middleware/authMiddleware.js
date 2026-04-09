@@ -18,9 +18,12 @@ const authMiddlware = async (req, res, next) => {
             verified = true;
             req.user = student;
         } else {
-            const teacher = await Teacher.findOne({where:{userName}});
-            req.user = teacher;
-            verified = true;
+            const teacher = await Teacher.findOne({where:{userName:decoded.userName}});
+            if(teacher){
+                req.user = teacher;
+                verified = true;
+            }
+
         }
 
         if (verified) {
