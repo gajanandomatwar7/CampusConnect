@@ -2,8 +2,6 @@ const express=require('express');
 const uiRoutes=express.Router();
 const authMiddlware=require('../middleware/authMiddleware');
 const Teacher=require('../models/teacher.table');
-const Student=require('../models/student.db');
-const Message=require('../models/message.db');
 uiRoutes.get('/',(req,res)=>{
     res.render('home');
 });

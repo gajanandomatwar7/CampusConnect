@@ -1,33 +1,38 @@
-const express = require('express');
+const express = require("express");
 const apiRoutes = express.Router();
-const Student = require('../models/student.db');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const Teacher = require('../models/teacher.table');
-const authMiddlware = require('../middleware/authMiddleware');
-const Status = require('../models/status.table');
-const checkValidity = require('../models/slots');
-const TimeTable = require('../models/tt.table');
-const { Op } = require('sequelize');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const Student=require("../models/student.table");
+const Teacher = require("../models/teacher.table");
+const authMiddlware = require("../middleware/authMiddleware");
+// const TimeTable = require("../models/tt.table");
+const { Op } = require("sequelize");
 // const uploadStudentImage = require('../controller/uploadImage');
 
-apiRoutes.post('/login', async (req, res) => {
+apiRoutes.post("/login", async (req, res) => {
     const role = req.query.role;
     const { userName, password } = req.body;
-    if (role == "student") {
+
+    if (role === "student") {
         try {
-            const user = await Student.findOne({ userName });
+            const user = await Student.findOne({
+                where: { userName },
+            });
+
             if (!user) {
-                return res.status(404).send("Invalid ");
+                return res.status(404).send("Invalid Credentials");
             }
+
             const isMatch = await bcrypt.compare(password, user.password);
+
             if (!isMatch) {
                 return res.status(404).send("Invalid Credentials");
             }
+
             const token = jwt.sign(
-                { _id: user._id, userName: user.userName },
+                { id: user.id, userName: user.userName },
                 process.env.JWT_SECRET,
-                { expiresIn: "1d" }
+                { expiresIn: "1d" },
             );
 
             res.cookie("token", token, {
@@ -35,11 +40,11 @@ apiRoutes.post('/login', async (req, res) => {
                 secure: false,
                 sameSite: "strict",
             });
-            res.redirect("../studentDashboard");
 
+            res.redirect("../studentDashboard");
         } catch (error) {
             console.log(error);
-
+            return res.status(500).send("Server Error");
         }
     } else {
         try {
@@ -50,12 +55,11 @@ apiRoutes.post('/login', async (req, res) => {
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 return res.status(400).send("invalid");
-
             }
             const token = jwt.sign(
                 { _id: user.id, userName: user.userName },
                 process.env.JWT_SECRET,
-                { expiresIn: "1d" }
+                { expiresIn: "1d" },
             );
 
             res.cookie("token", token, {
@@ -64,39 +68,36 @@ apiRoutes.post('/login', async (req, res) => {
                 sameSite: "strict",
             });
 
-            res.redirect('../facultyDashboard');
-
+            res.redirect("../facultyDashboard");
         } catch (error) {
             console.log(error);
         }
     }
-})
+});
 
-apiRoutes.post('/studentRegister', async (req, res) => {
+apiRoutes.post("/studentRegister", async (req, res) => {
     try {
-        const { firstName, lastName, userName, PRN, dept, semester, password } = req.body;
+        const { firstName, lastName, userName, PRN, dept, semester, password } =
+            req.body;
 
         const encPassword = await bcrypt.hash(password, 10);
 
-        const newStudent = new Student({
+        await Student.create({
             firstName,
             lastName,
             userName,
-            PRN,
+            PRN: Number(PRN),
             dept,
-            semester,
-            password: encPassword
+            semester: Number(semester),
+            password: encPassword,
         });
-
-        await newStudent.save();
 
         res.send("Student Registered Successfully ✅");
 
     } catch (error) {
         console.error(error);
 
-        // Duplicate PRN error
-        if (error.code === 11000) {
+        if (error.name === "SequelizeUniqueConstraintError") {
             return res.send("PRN already exists ❌");
         }
 
@@ -104,7 +105,7 @@ apiRoutes.post('/studentRegister', async (req, res) => {
     }
 });
 
-apiRoutes.post('/facultyRegister', async (req, res) => {
+apiRoutes.post("/facultyRegister", async (req, res) => {
     try {
         const { userName, firstName, lastName, designation, password } = req.body;
 
@@ -117,31 +118,30 @@ apiRoutes.post('/facultyRegister', async (req, res) => {
             firstName,
             lastName,
             designation,
-            password: encPassword
+            password: encPassword,
         });
 
         // console.log("teahcer created", teacher);
 
-        const role = "teacher"
+        const role = "teacher";
         res.redirect(`/login?role=${role}`);
-
     } catch (error) {
         console.log(error);
     }
 });
 
-apiRoutes.post('/updateStatus', authMiddlware, async (req, res) => {
+apiRoutes.post("/updateStatus", authMiddlware, async (req, res) => {
     const { status } = req.body;
     if (!status) {
-        return res.status(400).send('can not change the status');
+        return res.status(400).send("can not change the status");
     }
 
     const update = await Status.create({
         teacherId: teacherId,
-        updatedStatus: status
+        updatedStatus: status,
     });
 
-    res.render('facultyDashboard');
+    res.render("facultyDashboard");
 });
 
 // apiRoutes.get('/faculty/:id/status', async (req, res) => {
@@ -191,7 +191,7 @@ apiRoutes.post('/updateStatus', authMiddlware, async (req, res) => {
 //                     status: "Available"
 //                 });
 //             } else {
-                
+
 //             }
 //         }
 
@@ -201,37 +201,33 @@ apiRoutes.post('/updateStatus', authMiddlware, async (req, res) => {
 //     }
 // });
 
-
-
-apiRoutes.get('/faculty/:id/status', async (req, res) => {
+apiRoutes.get("/faculty/:id/status", async (req, res) => {
     const facultyId = req.params.id;
 
     try {
         const now = new Date();
 
-        const curTime = now.toTimeString().slice(0, 5);      
-        const curTimeFull = now.toTimeString().slice(0, 8);  
+        const curTime = now.toTimeString().slice(0, 5);
+        const curTimeFull = now.toTimeString().slice(0, 8);
 
-        const today = now.toLocaleDateString('en-US', {
-            weekday: 'long'
+        const today = now.toLocaleDateString("en-US", {
+            weekday: "long",
         });
 
         const latestStatus = await Status.findOne({
             where: { teacherId: facultyId },
-            order: [['createdAt', 'DESC']]
+            order: [["createdAt", "DESC"]],
         });
 
         if (latestStatus) {
-            const updatedTime = latestStatus.createdAt
-                .toTimeString()
-                .slice(0, 5);
+            const updatedTime = latestStatus.createdAt.toTimeString().slice(0, 5);
 
             const isValid = checkValidity(curTime, updatedTime);
 
             if (isValid) {
                 return res.json({
                     source: "manual",
-                    status: latestStatus.updatedStatus
+                    status: latestStatus.updatedStatus,
                 });
             }
         }
@@ -241,8 +237,8 @@ apiRoutes.get('/faculty/:id/status', async (req, res) => {
                 teacherId: facultyId,
                 day: today,
                 startTime: { [Op.lte]: curTimeFull },
-                endTime: { [Op.gt]: curTimeFull }
-            }
+                endTime: { [Op.gt]: curTimeFull },
+            },
         });
 
         if (currentClass) {
@@ -252,9 +248,8 @@ apiRoutes.get('/faculty/:id/status', async (req, res) => {
         }
 
         return res.json({
-            status: "Available"
+            status: "Available",
         });
-
     } catch (error) {
         console.log(error);
         res.status(500).send("Server Error");
@@ -263,16 +258,14 @@ apiRoutes.get('/faculty/:id/status', async (req, res) => {
 
 // apiRoutes.post('/uploadStdentImage',authMiddlware,upload.single('image'),uploadStudentImage(req,res));
 
-
-apiRoutes.post('/addTTentry', (req, res) => {
+apiRoutes.post("/addTTentry", (req, res) => {
     //adding tt entry
-    //should we keep this as feature for admin side or what 
+    //should we keep this as feature for admin side or what
 });
 
+//experimenting
 
-//experimenting 
-
-apiRoutes.get('/find-teacher', async (req, res) => {
+apiRoutes.get("/find-teacher", async (req, res) => {
     try {
         const { search } = req.query;
 
@@ -282,25 +275,23 @@ apiRoutes.get('/find-teacher', async (req, res) => {
             whereCondition = {
                 [Op.or]: [
                     { firstName: { [Op.like]: `%${search}%` } },
-                    { lastName: { [Op.like]: `%${search}%` } }
-                ]
+                    { lastName: { [Op.like]: `%${search}%` } },
+                ],
             };
         }
 
         const teachers = await Teacher.findAll({
             where: whereCondition,
-            attributes: ["username", "firstName", "lastName"]
+            attributes: ["username", "firstName", "lastName"],
         });
 
         return res.json(teachers);
-
     } catch (err) {
-        console.error("ERROR IN FIND TEACHER:", err); 
+        console.error("ERROR IN FIND TEACHER:", err);
         return res.status(500).json({
-            error: err.message
+            error: err.message,
         });
     }
 });
-
 
 module.exports = apiRoutes;

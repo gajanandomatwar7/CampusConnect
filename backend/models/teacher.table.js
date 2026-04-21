@@ -15,6 +15,10 @@ const Teacher = sequelize.define('Teacher', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  department:{
+    type:DataTypes.STRING,
+    allowNull:false,
+  },
   designation:{
     type: DataTypes.STRING,
     allowNull: false
@@ -22,22 +26,29 @@ const Teacher = sequelize.define('Teacher', {
   password:{
     type:DataTypes.STRING,
     allowNull:false,
-  }
-  // subjects:{
-  //   type: DataTypes.ARRAY
-  // },
+  },
+  emailID:{
+    type:DataTypes.STRING,
+    allowNull:false,
+  },
+subjects: {
+    type: DataTypes.JSON,
+    // allowNull: false
+},
+ latiitude:{
+  type:DataTypes.FLOAT,
+  allowNull: true,
+ },
+ longitude:{
+  type: DataTypes.FLOAT,
+  allowNull: true,
+ },
+ imageURL:{
+  type: DataTypes.STRING,
+  allowNull: true,
+ }
 
 });
 
-Teacher.associate = (models) => {
-    Teacher.hasMany(models.TimeTable, {
-        foreignKey: "teacherId",
-        as: "schedule"
-    });
-    Teacher.hasMany(models.Status, {
-    foreignKey: "teacherId",
-    as: "statuses"
-});
-};
 
 module.exports = Teacher;

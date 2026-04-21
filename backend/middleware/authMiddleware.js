@@ -1,6 +1,5 @@
 //authentication middleware so that the logged in users can only navigate between the pages
 const jwt = require("jsonwebtoken");
-const studentModel = require("../models/student.db");
 const Teacher = require("../models/teacher.table");
 
 const authMiddlware = async (req, res, next) => {

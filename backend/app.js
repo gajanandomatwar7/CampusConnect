@@ -16,14 +16,13 @@ dotenv.config();
 const cookieParser=require('cookie-parser');
 app.use(cookieParser());
 
-const connectToDb=require('./config/mongodb.config');
-connectToDb();
-
 const {connectDb}=require('./config/mysqldb.config');
 connectDb();
 
 //creating tables only once when new table is created or schema is changed
-require('./models/modelsSync');
+require("./models/student.table");
+require("./models/teacher.table");
+
 const create=require('./config/create.table');
 create();
 
