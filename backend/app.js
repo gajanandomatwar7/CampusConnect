@@ -35,7 +35,6 @@ app.set('view engine', 'ejs');
 
 app.use(express.static("public"));
 
-require('./sockets/chat.socket')(io);
 
 server.listen(3000,()=>{
     console.log("server running at 3000 port");

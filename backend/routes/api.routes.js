@@ -107,26 +107,29 @@ apiRoutes.post("/studentRegister", async (req, res) => {
 
 apiRoutes.post("/facultyRegister", async (req, res) => {
     try {
-        const { userName, firstName, lastName, designation, password } = req.body;
+        const { firstName, lastName, userName, department, designation, emailID, password } = req.body;
 
-        if (!userName || !firstName || !lastName || !designation || !password) {
-            return res.status(400).send("error while registring ");
+        if (!userName || !firstName || !lastName || !designation || !password || !emailID || !department) {
+            return res.status(400).send("Missing fields");
         }
+
         const encPassword = await bcrypt.hash(password, 10);
-        const teacher = await Teacher.create({
-            userName,
+
+        await Teacher.create({
             firstName,
             lastName,
+            userName,
+            department,
             designation,
-            password: encPassword,
+            emailID,
+            password: encPassword
         });
 
-        // console.log("teahcer created", teacher);
+        return res.send("registratered successfully ");
 
-        const role = "teacher";
-        res.redirect(`/login?role=${role}`);
     } catch (error) {
         console.log(error);
+        res.status(500).send("Error registering faculty");
     }
 });
 

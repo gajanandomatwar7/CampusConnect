@@ -31,7 +31,7 @@ const Teacher = sequelize.define('Teacher', {
     type:DataTypes.STRING,
     allowNull:false,
   },
-subjects: {
+  subjects: {
     type: DataTypes.JSON,
     // allowNull: false
 },
